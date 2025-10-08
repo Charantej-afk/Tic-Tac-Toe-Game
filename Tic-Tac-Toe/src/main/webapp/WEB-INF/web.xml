@@ -1,14 +1,16 @@
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-         http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1">
+         version="4.0">
     <servlet>
-        <servlet-name>TicTacToeServlet</servlet-name>
-        <servlet-class>tictactoe.TicTacToeServlet</servlet-class>
+        <servlet-name>Game</servlet-name>
+        <servlet-class>mypackage.Game</servlet-class>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>TicTacToeServlet</servlet-name>
-        <url-pattern>/tic-tac-toe</url-pattern>
+        <servlet-name>Game</servlet-name>
+        <url-pattern>/greet</url-pattern>
     </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 </web-app>

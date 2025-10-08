@@ -82,8 +82,10 @@ public class Game extends HttpServlet {
             if (makeMove(row, col)) {
                 if (checkWin()) {
                     message = "Player " + currentPlayer + " wins! 🎉";
+                    resetBoard(); // reset for new game
                 } else if (isBoardFull()) {
                     message = "It's a draw!";
+                    resetBoard(); // reset for new game
                 } else {
                     switchPlayer();
                 }
@@ -92,7 +94,35 @@ public class Game extends HttpServlet {
             }
         }
 
+        // Generate HTML
         out.println("<html><head><title>Tic Tac Toe</title></head>");
         out.println("<body style='text-align:center; font-family:Arial;'>");
         out.println("<h1>Tic Tac Toe Game 🎮</h1>");
-        out
+
+        if (!message.isEmpty()) {
+            out.println("<h2>" + message + "</h2>");
+        }
+
+        // Show board with clickable links
+        out.println("<table style='margin:auto; border-collapse: collapse;'>");
+        for (int i = 0; i < 3; i++) {
+            out.println("<tr>");
+            for (int j = 0; j < 3; j++) {
+                out.println("<td style='border:1px solid black; width:50px; height:50px; text-align:center;'>");
+                if (board[i][j] == '-') {
+                    out.println("<a href='?row=" + i + "&col=" + j + "' style='text-decoration:none; font-size:24px;'>-</a>");
+                } else {
+                    out.println("<span style='font-size:24px;'>" + board[i][j] + "</span>");
+                }
+                out.println("</td>");
+            }
+            out.println("</tr>");
+        }
+        out.println("</table>");
+
+        out.println("<p>Current Player: " + currentPlayer + "</p>");
+        out.println("</body></html>");
+
+        out.close();
+    }
+}

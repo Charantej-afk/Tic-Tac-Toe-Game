@@ -1,53 +1,55 @@
 package tictactoe;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
+import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
-@WebServlet("/tic-tac-toe")
 public class TicTacToeServlet extends HttpServlet {
-    private Game game = new Game();
+    private static final long serialVersionUID = 1L;
+    private Game game;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        resp.setContentType("text/html");
-        PrintWriter out = resp.getWriter();
-
-        out.println("<html><body>");
-        out.println("<h2>Tic Tac Toe</h2>");
-        out.println(game.getBoardHtml());
-        out.println("<form method='post'>");
-        out.println("Row: <input name='row' type='number' min='1' max='3' required />");
-        out.println("Col: <input name='col' type='number' min='1' max='3' required />");
-        out.println("<input type='submit' value='Move'/>");
-        out.println("</form>");
-        if (game.getWinner() != null) {
-            out.println("<h3>Winner: " + game.getWinner() + "</h3>");
-            out.println("<form method='post'><input type='hidden' name='reset' value='1'/>");
-            out.println("<input type='submit' value='Restart' /></form>");
-        } else if (game.isDraw()) {
-            out.println("<h3>It's a draw!</h3>");
-            out.println("<form method='post'><input type='hidden' name='reset' value='1'/>");
-            out.println("<input type='submit' value='Restart' /></form>");
-        }
-        out.println("</body></html>");
+    public void init() throws ServletException {
+        game = new Game();
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (req.getParameter("reset") != null) {
-            game = new Game();
-        } else {
-            try {
-                int row = Integer.parseInt(req.getParameter("row")) - 1;
-                int col = Integer.parseInt(req.getParameter("col")) - 1;
-                game.playMove(row, col);
-            } catch (Exception ignored) {}
+        response.setContentType("text/plain");
+        PrintWriter out = response.getWriter();
+
+        String action = request.getParameter("action");
+
+        if (action == null) {
+            out.println("Usage:");
+            out.println("1. ?action=move&row=0&col=1");
+            out.println("2. ?action=board");
+            out.println("3. ?action=reset");
+            return;
         }
-        resp.sendRedirect("tic-tac-toe");
+
+        switch (action) {
+            case "move":
+                try {
+                    int row = Integer.parseInt(request.getParameter("row"));
+                    int col = Integer.parseInt(request.getParameter("col"));
+                    out.println(game.makeMove(row, col));
+                } catch (Exception e) {
+                    out.println("Invalid parameters. Example: ?action=move&row=1&col=2");
+                }
+                break;
+
+            case "board":
+                out.println(game.getBoardAsString());
+                break;
+
+            case "reset":
+                out.println(game.reset());
+                break;
+
+            default:
+                out.println("Unknown action.");
+        }
     }
 }
